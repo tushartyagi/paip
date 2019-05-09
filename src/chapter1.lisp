@@ -1,7 +1,5 @@
 (in-package :paip)
 
-(declaim (optimize (debug 3)))
-
 ;; The distinction between a user and a programmer is that a user
 ;; provides new input or data and the programmer defines new
 ;; operations, programs, as well as data.
