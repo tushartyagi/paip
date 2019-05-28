@@ -12,4 +12,5 @@
   :components ((:module "src" :serial t
                         :components ((:file "package")
                                      (:file "chapter1")
-                                     (:file "chapter2")))))
+                                     (:file "chapter2")
+                                     (:file "chapter3")))))
