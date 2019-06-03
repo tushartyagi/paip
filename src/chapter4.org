@@ -1,0 +1,86 @@
+#+TITLE: Paradigms of AI Programming: Chapter 4
+#+AUTHOR: Tushar Tyagi
+#+EMAIL: mail@tushartyagi.com
+#+LANGUAGE: en
+#+STARTUP: align indent fold nodlcheck hidestars oddeven lognotestate
+#+PROPERTY: header-args :tangle chapter4.lisp
+
+#+name: package-init
+#+begin_src lisp :session paip :results none
+  (in-package :paip)
+#+end_src
+
+* Writing Computer Programs
+
+1. Problem Description: Defining in English
+2. Program Specification: Redescribe in terms of procedures
+3. Implementation
+4. Testing
+5. Debugging and Analysis
+
+* General Problem Solver 
+
+First ever computer program to separate problem solving strategies with the
+problem domain.
+
+GPS uses /means-end analysis/, which basically means eliminate the difference
+between what I have and what I want, i.e starting from the end state and working
+backwards to reach the current state. In programmatic terms, this would mean
+recursively solve problems and change the state of the world, although there
+might be the situation wherein before solving the problem at hand we have to
+solve the /preconditions/ that arise.
+
+** Program Structure
+
+Starting and end *states* of the world are represented as sets of conditions,
+where each condition is a symbol.
+
+There's a *list of operators* which is mostly different for each problem
+domain. 
+
+An *operator* is represented by a structure of an action, a list of
+preconditions, and a list of effects. An effect can add or remove the existing
+states.
+
+We try to individually change the states, and change each starting state to goal
+states by selecting and applying operator. An operator should be applied to the
+current state if the end goal is in the add-state of the operator.
+  
+* The Entire Program
+
+#+begin_src lisp :session paip :results none
+  (defvar *state* nil 
+    "The current state: a list of operations")
+
+  (defvar *ops* nil
+    "A list of available operators")
+
+  (defstruct op
+    "An operation"
+    (action nil)
+    (preconds nil)
+    (add-list nil)
+    (del-list nil))
+
+  (defun GPS (*state* goals *ops*)
+    "General Purpose Solver: Achieve all goals using *ops*."
+    (if (every #'achieve goals) 'solved))
+
+  (defun achieve (goal)
+    "A goal is achieved if it is already holds, or if there's an
+    appropriate op for it that is applicable"
+    (or (member goal *state*)
+        (some #'apply-op
+              (find-all goal *ops* :test #'appropriate-p))))
+
+  (defun appropriate-p (goal op)
+    "An op is appropriate to a goal if it is in its add list"
+    (member goal (op-add-list op)))
+
+  (defun apply-op (op)
+    "Print a message and update *state* if op is appropriate"
+    (when (every #'achieve (op-preconds op))
+      (print (list 'executing (op-action op)))
+      (setf *state* (set-difference *state* (op-del-list op)))
+      (setf *state* (union *state* (op-add-list op)))))
+#+end_src

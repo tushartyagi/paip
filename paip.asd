@@ -13,4 +13,5 @@
                         :components ((:file "package")
                                      (:file "chapter1")
                                      (:file "chapter2")
-                                     (:file "chapter3")))))
+                                     (:file "chapter3")
+                                     (:file "chapter4")))))

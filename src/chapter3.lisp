@@ -137,7 +137,3 @@
 (macroexpand-1 '(while (< i 10)
            (print (* i i))
                  (setf i (+ i 1))))
-
-
-
-
